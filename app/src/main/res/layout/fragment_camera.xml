@@ -17,28 +17,28 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <SeekBar
-        android:id="@+id/zoom_bar"
-        android:layout_width="0dp"
+        android:id="@+id/zoomBar"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/capture_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:max="10"
+        android:max="100"
         android:progress="0"
         android:layout_marginBottom="50dp" />
 
-    <Button
+    <ImageButton
         android:id="@+id/capture_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Capture"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:backgroundTint="@color/purple_500"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_capture"
+        android:background="@drawable/round_button"
+        android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="80dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

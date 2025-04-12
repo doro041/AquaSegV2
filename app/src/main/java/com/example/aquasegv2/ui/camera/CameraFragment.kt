@@ -1,14 +1,14 @@
 package com.example.aquasegv2.ui.camera
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowInsetsController
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -19,6 +19,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.aquasegv2.R
 import com.example.aquasegv2.databinding.FragmentCameraBinding
 import java.io.File
 import java.text.SimpleDateFormat
@@ -47,8 +48,7 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        // Check camera permissions
+        // Check camera permissions and start the camera if granted.
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -57,26 +57,44 @@ class CameraFragment : Fragment() {
             )
         }
 
-        // Set up the capture button to take a photo when clicked
+        // Set up the capture button to take a photo when clicked.
         binding.captureButton.setOnClickListener {
             takePhoto()
         }
 
+        // Initialize the zoom slider
+        setupZoomSlider()
+
         cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun setupZoomSlider() {
+        binding.zoomBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                // Apply zoom after the camera is initialized
+                camera?.cameraControl?.setLinearZoom(progress / 100f)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
     }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            val cameraProvider = cameraProviderFuture.get()
 
-            // Set up the preview
+            // Reset the zoom bar progress to 0 when the camera starts
+            binding.zoomBar.progress = 0
+
+            // Set up the preview use case.
             val preview = Preview.Builder().build().also {
                 it.setSurfaceProvider(binding.previewView.surfaceProvider)
             }
 
-            // Set up image capture
+            // Set up image capture use case.
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
@@ -84,44 +102,43 @@ class CameraFragment : Fragment() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
+                // Unbind all use cases before rebinding.
                 cameraProvider.unbindAll()
-                // Bind use cases to camera
+
+                // Bind use cases to the lifecycle.
                 camera = cameraProvider.bindToLifecycle(
                     viewLifecycleOwner, cameraSelector, preview, imageCapture
                 )
+
+                // Apply zoom based on the current SeekBar progress (which is 0 by default)
+                camera?.cameraControl?.setLinearZoom(binding.zoomBar.progress / 100f)
+
             } catch (exc: Exception) {
-                Log.e(TAG, "Camera binding failed", exc)
+                Log.e(TAG, "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     private fun takePhoto() {
-        // Get a reference to the ImageCapture use case
         val imageCapture = imageCapture ?: return
 
-        // Create a timestamped file
-        val outputDirectory = getOutputDirectory()
         val photoFile = File(
-            outputDirectory,
+            getOutputDirectory(),
             SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg"
         )
 
-        // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-        // Set up image capture listener
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val msg = "Photo saved: ${photoFile.absolutePath}"
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+                    Toast.makeText(requireContext(), "Photo saved at ${photoFile.absolutePath}", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Log.e(TAG, "Photo capture failed: ${exception.message}", exception)
+                    Log.e(TAG, "Photo capture failed", exception)
                 }
             }
         )
@@ -129,30 +146,9 @@ class CameraFragment : Fragment() {
 
     private fun getOutputDirectory(): File {
         val mediaDir = requireContext().externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(getAppNameResourceId())).apply { mkdirs() }
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
         }
-        return if (mediaDir != null && mediaDir.exists()) mediaDir else requireContext().filesDir
-    }
-
-    // Helper function to get app name resource ID
-    private fun getAppNameResourceId(): Int {
-        return requireContext().resources.getIdentifier("app_name", "string", requireContext().packageName)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+        return mediaDir ?: requireContext().filesDir
     }
 
     override fun onDestroyView() {
