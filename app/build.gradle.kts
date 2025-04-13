@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.litert.support.api)
+    implementation(libs.litert.metadata)
+    implementation(libs.litert)
 
     val cameraxVersion = "1.4.2"
     implementation ("androidx.camera:camera-core:$cameraxVersion")
