@@ -1,6 +1,7 @@
 package com.example.aquasegv2.ui.camera
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -226,6 +227,7 @@ class CameraFragment : Fragment(), InstanceSegmentation.InstanceSegmentationList
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onDetect(
         interfaceTime: Long,
         results: List<SegmentationResult>,
