@@ -232,11 +232,18 @@ class CameraFragment : Fragment(), InstanceSegmentation.InstanceSegmentationList
         preProcessTime: Long,
         postProcessTime: Long
     ) {
+        if (!isAdded || activity == null || context == null) {
+            // Fragment is no longer attached — skip everything
+            return
+        }
+
         if (results.isEmpty()) {
             Log.e("Segmentation", "No results detected!")
+
             requireActivity().runOnUiThread {
+                if (!isAdded || context == null) return@runOnUiThread
                 segmentedBitmap = null
-                Toast.makeText(requireContext().applicationContext, "No objects detected for segmentation", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No objects detected for segmentation", Toast.LENGTH_SHORT).show()
             }
             return
         }
@@ -245,13 +252,15 @@ class CameraFragment : Fragment(), InstanceSegmentation.InstanceSegmentationList
         Log.d("Segmentation", "Segmentation successful, results applied to bitmap.")
 
         requireActivity().runOnUiThread {
+            if (!isAdded || context == null) return@runOnUiThread
+
             segmentedBitmap = image
             binding.tvPreprocess.text = preProcessTime.toString()
             binding.tvInference.text = interfaceTime.toString()
             binding.tvPostprocess.text = postProcessTime.toString()
             binding.ivTop.setImageBitmap(image)
+            }
         }
-    }
 
     override fun onEmpty() {
         requireActivity().runOnUiThread {
