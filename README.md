@@ -1,4 +1,4 @@
-# Lobster Instance Segmentation App (Kotlin and YOLOv8-Seg + MobileSAM)
+# Lobster Instance Segmentation App (Kotlin and YOLO11-Seg)
 
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
