@@ -48,4 +48,8 @@ This Android application provides real-time instance segmentation of lobsters di
 ## 🧑‍💻 Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or open issues for any bugs, feature requests, or improvements.
-## 📄 License
+
+## 📚 Research Context
+
+This app is part of a research dissertation focused on the detection and segmentation of egg-bearing lobsters using machine learning techniques. The project explores various segmentation pipelines, with the current app using a YOLO11-Seg model for real-time mobile deployment. Future iterations may integrate a previously tested point-prompt-based pipeline (YOLO12+MobileSAM) for more advanced segmentation capabilities, or create a few-shot instance segmentation pipeline.
+
