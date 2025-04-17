@@ -88,7 +88,7 @@ class CameraFragment : Fragment(), InstanceSegmentation.InstanceSegmentationList
 
         instanceSegmentation = InstanceSegmentation(
             context = requireContext().applicationContext,
-            modelPath = "yolo11n-seg_float16.tflite",
+            modelPath = "yolo11n-seg-eggnoegg_float32.tflite",
             labelPath = null,
             instanceSegmentationListener = this,
             message = {
@@ -171,47 +171,51 @@ class CameraFragment : Fragment(), InstanceSegmentation.InstanceSegmentationList
 
     private fun saveCombinedImage() {
         val original = originalBitmap ?: run {
-            Log.e("CameraX", "No original bitmap available!")
-            Toast.makeText(requireContext().applicationContext, "No original frame to save.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "No original frame to save.", Toast.LENGTH_SHORT).show()
             return
         }
 
         val segmented = segmentedBitmap ?: run {
-            Log.e("CameraX", "No segmented bitmap available!")
-            Toast.makeText(requireContext().applicationContext, "No segmentation result to save.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "No segmentation result to save.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        try {
-            // Combine the original and segmented bitmaps.
-            val combinedBitmap =
-                Bitmap.createBitmap(original.width, original.height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(combinedBitmap)
-            canvas.drawBitmap(original, 0f, 0f, null)
-            canvas.drawBitmap(segmented, 0f, 0f, null)
+        // Combine the original and segmented bitmaps.
+        val combinedBitmap = Bitmap.createBitmap(original.width, original.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(combinedBitmap)
+        canvas.drawBitmap(original, 0f, 0f, null)
+        canvas.drawBitmap(segmented, 0f, 0f, null)
 
-            // Save the combined bitmap to the Download directory.
-            val photoDirectory = File("/storage/emulated/0/Download").apply { mkdirs() }
-            val timestamp = System.currentTimeMillis()
-            val photoFile = File(photoDirectory, "combined_image_$timestamp.jpg")
+        // Save using MediaStore API (scoped storage)
+        saveToMediaStore(combinedBitmap)
+    }
 
-            FileOutputStream(photoFile).use { out ->
-                combinedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-                out.flush()
+    private fun saveToMediaStore(bitmap: Bitmap) {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "combined_image_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/AquaSeg")
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val resolver = requireContext().contentResolver
+        val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+        if (imageUri != null) {
+            resolver.openOutputStream(imageUri)?.use { out ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
             }
 
-            addImageToGallery(photoFile)
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            resolver.update(imageUri, contentValues, null, null)
 
-            Toast.makeText(
-                requireContext().applicationContext,
-                "Combined Image Saved: ${photoFile.absolutePath}",
-                Toast.LENGTH_SHORT
-            ).show()
-            Log.d("CameraX", "Combined Image saved successfully.")
-        } catch (e: Exception) {
-            Log.e("CameraX", "Error saving combined image: ${e.message}", e)
+            Toast.makeText(requireContext(), "Image saved to AquaSeg folder", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireContext(), "Failed to save image", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun addImageToGallery(file: File) {
         try {
