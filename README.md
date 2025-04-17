@@ -34,8 +34,7 @@ This Android application provides real-time instance segmentation of lobsters di
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/](https://github.com/)<YOUR_GITHUB_USERNAME>/LobsterSegmentationApp.git
-    cd LobsterSegmentationApp
+    git clone [https://github.com/](https://github.com/)doro041/AquaSegV2.git
     ```
 
 2.  **Open in Android Studio:** Open the project in Android Studio.
