@@ -39,7 +39,7 @@ class AboutViewModel : ViewModel() {
             append("Version: 2.0.1\n\n")
 
 
-                append("Thank you for doing your part to protect our oceans!\n")
+                append("Thank you for doing your part to protect our oceans!\n\n")
             }
         }
     }

@@ -265,11 +265,13 @@ class CameraFragment : Fragment(), InstanceSegmentation.InstanceSegmentationList
             binding.tvInference.text = interfaceTime.toString()
             binding.tvPostprocess.text = postProcessTime.toString()
             binding.ivTop.setImageBitmap(image)
-            }
         }
+    }
 
     override fun onEmpty() {
-        requireActivity().runOnUiThread {
+        if (!isAdded || activity == null) return
+
+        activity?.runOnUiThread {
             binding.ivTop.setImageResource(0)
         }
     }
