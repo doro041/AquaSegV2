@@ -10,16 +10,9 @@ import androidx.core.content.ContextCompat
 class DrawImages(private val context: Context) {
 
     private val boxColors = listOf(
-        R.color.overlay_orange,
         R.color.overlay_blue,
-        R.color.overlay_green,
         R.color.overlay_red,
-        R.color.overlay_pink,
-        R.color.overlay_cyan,
-        R.color.overlay_purple,
-        R.color.overlay_gray,
-        R.color.overlay_teal,
-        R.color.overlay_yellow,
+        R.color.overlay_green
     )
 
     fun invoke(results: List<SegmentationResult>) : Bitmap {
