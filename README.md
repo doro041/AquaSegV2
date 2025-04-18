@@ -5,51 +5,50 @@
 
 A real-time mobile application for instance segmentation of egg-bearing lobsters using a lightweight YOLO11-seg,. Built natively in Kotlin for Android, with efficient offline on-device inference powered by TensorFlow Lite.
 
-## 📱 Overview
+## 📱 OverviewLobster Instance Segmentation App - User Manual
+Version 1.0.0
+Table of Contents
 
-This Android application provides real-time instance segmentation of lobsters directly from your device's camera feed. Tailored to support offshore workers and researchers, it utilizes a **custom-trained YOLOv8-Seg model** specifically designed for detecting and segmenting **egg-bearing lobsters**. Optimized for **offline use**, the app ensures reliable functionality even in environments without network connectivity.
-
-*(Note: While initial research explored point-prompt-based segmentation pipeline YOLO12+MobileSAM, the current application utilizes a different approach based on a custom dataset and YOLO11seg-based segmentation pipeline, due to it being a single model,and running faster on a mobile device. Future iteration of the project, will be able to integrate the tested pipeline in a more efficient manner.)*
-## ✨ Key Features
-
-* **🦞 Egg-Bearing Lobster Detection:** Identifies and segments egg-bearing lobsters in real-time.
-* **📸 Real-time Inference:** Provides immediate segmentation results directly from the camera feed.
-* **💾 Save with Overlayed Masks:** Allows users to save captured images with the generated segmentation masks overlaid.
-* **⏱️ Performance Monitoring:** Displays on-screen metrics for:
-    * **Inference Time:** The duration taken by the model to perform segmentation.
-    * **Post-processing Time:** The time required to process the model's output (e.g., generating masks).
-    * **Pre-processing Time:** The time taken to prepare the input image for the model.
-* **🛰️ Offline Operation:** Functions entirely offline, making it suitable for remote locations without internet access.
-* **ℹ️ Introduction & About Pages:** Includes dedicated screens for app introduction and information about the technology and its usage.
-
-## 🛠️ Technologies Used
-
-- **Kotlin:** The primary programming language for the Android application.
-- **TensorFlow Lite:** Google's lightweight machine learning framework for on-device inference.
-- **YOLO11-Seg:** A state-of-the-art object detection and instance segmentation model, optimized for mobile deployment.
+1. Introduction
+2. Installation
 
 
+1. Introduction
+The Lobster Instance Segmentation App is designed for marine biologists, offshore workers, and researchers who need to identify and analyze egg-bearing lobsters in the field. This application uses advanced AI technology to provide real-time detection and segmentation of lobsters directly from your device's camera feed, with a special focus on identifying egg-bearing (berried) specimens.
+The app utilizes a custom-trained YOLO11-Seg model optimized for mobile deployment via TensorFlow Lite, enabling efficient on-device inference without requiring internet access.
+Key benefits include:
 
-## ⚙️ Setup and Installation (Example - Adjust as needed)
+Works entirely offline - perfect for offshore and remote locations
+Real-time segmentation directly on your Android device
+User-friendly interface designed for field conditions
+Ability to save and share findings for research purposes
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone [https://github.com/](https://github.com/)doro041/AquaSegV2.git
-    ```
+2. Installation
+System Requirements
 
-2.  **Open in Android Studio:** Open the project in Android Studio.
+2. Installation
+System Requirements
 
-3.  **Build and Run:** Connect an Android device or emulator and run the application.
-   
+Android device running Android 8.0 (Oreo) or higher
+3GB RAM minimum (4GB or more recommended)
+Camera with autofocus
+100MB free storage space
+
+Installation Steps
+
+Note: This application is currently in development and not yet production-ready. It is not available on Google Play Store.
+
+Option 1: Direct USB Installation (Developer Mode)
+
+Enable Developer Options on your Android device:
+
+Go to Settings > About Phone
+Tap "Build Number" 7 times until you see "You are now a developer" message
+Go back to Settings > System > Developer Options
+Enable "USB Debugging"
 
 
+Connect your device to your computer via USB
+Clone the repository to your computer:
 
-
-## 🧑‍💻 Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues for any bugs, feature requests, or improvements.
-
-## 📚 Research Context
-
-This app is part of a research dissertation focused on the detection and segmentation of egg-bearing lobsters using machine learning techniques. The project explores various segmentation pipelines, with the current app using a YOLO11-Seg model for real-time mobile deployment. Future iterations may integrate a previously tested point-prompt-based pipeline (YOLO12+MobileSAM) for more advanced segmentation capabilities, or create a few-shot instance segmentation pipeline.
 
